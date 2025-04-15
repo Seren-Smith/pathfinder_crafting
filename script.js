@@ -628,8 +628,5 @@ function calculate() {
         `Accelerated: ${daysAccel} day(s) (DC +5)`
     );
     
-    outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
+    outputDiv.innerHTML = `<pre>${statLines.filter(line => line !== "").join('\n')}</pre>`;
 }}
-
-// Initialize the app when the DOM is loaded
-document.addEventListener('DOMContentLoaded', init);
