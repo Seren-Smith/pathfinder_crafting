@@ -342,16 +342,7 @@ function renderEnchantments() {
     // Clear existing enchantments
     existingEnchantmentsDiv.innerHTML = '';
     desiredEnchantmentsDiv.innerHTML = '';
-    
-    // Add headers
-    const existingHeader = document.createElement('h6');
-    existingHeader.textContent = 'Existing Enchantments';
-    existingEnchantmentsDiv.appendChild(existingHeader);
-    
-    const desiredHeader = document.createElement('h6');
-    desiredHeader.textContent = 'Desired Enchantments';
-    desiredEnchantmentsDiv.appendChild(desiredHeader);
-    
+
     // Create container divs for scrollable content
     const existingContainer = document.createElement('div');
     existingContainer.className = 'enchantment-container';
@@ -629,7 +620,7 @@ function calculate() {
     );
     
     //outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
-    outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
+    outputDiv.innerHTML = statLines.filter(line => line !== "").join('<br>');
 }}
 
 // Initialize the app when the DOM is loaded
