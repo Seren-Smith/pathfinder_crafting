@@ -261,6 +261,35 @@ const desiredEnchantmentsDiv = document.getElementById('desiredEnchantments');
 const selectAllExistingBtn = document.getElementById('selectAllExisting');
 const deselectAllExistingBtn = document.getElementById('deselectAllExisting');
 
+// Initialize the app when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default item type to Weapon
+    document.getElementById('weaponType').checked = true;
+    
+    // Render initial items and enchantments
+    renderBaseItems();
+    renderEnchantments();
+    
+    // Set up event listeners
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Item type change
+    itemTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            renderBaseItems();
+            renderEnchantments();
+        });
+    });
+    
+    // Calculate button
+    calculateBtn.addEventListener('click', calculate);
+    
+    // Select/Deselect all buttons
+    selectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', true));
+    deselectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', false));
+}
 // Initialize the app
 function init() {
     renderBaseItems();
@@ -282,11 +311,12 @@ function init() {
 
 function renderBaseItems() {
     const itemType = document.querySelector('input[name="itemType"]:checked').value;
-    baseItemSelect.innerHTML = '';
-    
     const items = itemType === 'Weapon' ? weaponBaseItems : armorBaseItems;
     
-    // Add a default empty option
+    // Clear existing options
+    baseItemSelect.innerHTML = '';
+    
+    // Add default option
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.textContent = '-- Select Base Item --';
@@ -294,21 +324,44 @@ function renderBaseItems() {
     defaultOption.disabled = true;
     baseItemSelect.appendChild(defaultOption);
     
+    // Add all items
     items.forEach(item => {
         const option = document.createElement('option');
         option.value = item.name;
         option.textContent = item.name;
         baseItemSelect.appendChild(option);
     });
+    
+    console.log('Base items rendered:', items.length); // Debug
 }
 
 function renderEnchantments() {
     const itemType = document.querySelector('input[name="itemType"]:checked').value;
     const enchantments = itemType === 'Weapon' ? weaponEnchantments : armorEnchantments;
     
+    // Clear existing enchantments
     existingEnchantmentsDiv.innerHTML = '';
     desiredEnchantmentsDiv.innerHTML = '';
     
+    // Add headers
+    const existingHeader = document.createElement('h6');
+    existingHeader.textContent = 'Existing Enchantments';
+    existingEnchantmentsDiv.appendChild(existingHeader);
+    
+    const desiredHeader = document.createElement('h6');
+    desiredHeader.textContent = 'Desired Enchantments';
+    desiredEnchantmentsDiv.appendChild(desiredHeader);
+    
+    // Create container divs for scrollable content
+    const existingContainer = document.createElement('div');
+    existingContainer.className = 'enchantment-container';
+    existingEnchantmentsDiv.appendChild(existingContainer);
+    
+    const desiredContainer = document.createElement('div');
+    desiredContainer.className = 'enchantment-container';
+    desiredEnchantmentsDiv.appendChild(desiredContainer);
+    
+    // Add all enchantments
     enchantments.forEach(ench => {
         // Existing enchantments
         const existingDiv = document.createElement('div');
@@ -322,8 +375,7 @@ function renderEnchantments() {
         
         const existingLabel = document.createElement('label');
         existingLabel.htmlFor = existingCheckbox.id;
-        existingLabel.className = 'enchantment-name';
-        existingLabel.textContent = `${ench.name} (+${ench.bonus})`;
+        existingLabel.innerHTML = `<strong>${ench.name}</strong> (+${ench.bonus})`;
         
         const existingDesc = document.createElement('div');
         existingDesc.className = 'enchantment-desc';
@@ -332,7 +384,7 @@ function renderEnchantments() {
         existingDiv.appendChild(existingCheckbox);
         existingDiv.appendChild(existingLabel);
         existingDiv.appendChild(existingDesc);
-        existingEnchantmentsDiv.appendChild(existingDiv);
+        existingContainer.appendChild(existingDiv);
         
         // Desired enchantments
         const desiredDiv = document.createElement('div');
@@ -346,8 +398,7 @@ function renderEnchantments() {
         
         const desiredLabel = document.createElement('label');
         desiredLabel.htmlFor = desiredCheckbox.id;
-        desiredLabel.className = 'enchantment-name';
-        desiredLabel.textContent = `${ench.name} (+${ench.bonus})`;
+        desiredLabel.innerHTML = `<strong>${ench.name}</strong> (+${ench.bonus})`;
         
         const desiredDesc = document.createElement('div');
         desiredDesc.className = 'enchantment-desc';
@@ -356,10 +407,11 @@ function renderEnchantments() {
         desiredDiv.appendChild(desiredCheckbox);
         desiredDiv.appendChild(desiredLabel);
         desiredDiv.appendChild(desiredDesc);
-        desiredEnchantmentsDiv.appendChild(desiredDiv);
+        desiredContainer.appendChild(desiredDiv);
     });
+    
+    console.log('Enchantments rendered:', enchantments.length); // Debug
 }
-
 function toggleAllEnchantments(type, checked) {
     const container = type === 'existing' ? existingEnchantmentsDiv : desiredEnchantmentsDiv;
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
