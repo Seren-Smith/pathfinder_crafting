@@ -1,62 +1,33 @@
-body {
-    background-color: #f8f9fa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-.card-header {
-    background-color: #343a40;
-    color: white;
-    font-weight: bold;
-}
-
-.enchantment-list {
-    height: 500px;
+.enchantment-container {
+    max-height: 400px;
     overflow-y: auto;
-    padding-right: 10px;
-}
-
-.form-check {
-    margin-bottom: 10px;
-}
-
-.results-output {
-    white-space: pre-line;
-    line-height: 1.6;
-    font-family: 'Courier New', Courier, monospace;
-    background-color: #f8f9fa;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #dee2e6;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
 }
 
 .enchantment-item {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    padding: 5px;
+    border-bottom: 1px solid #eee;
 }
 
 .enchantment-item label {
-    cursor: pointer;
     display: block;
-    padding: 5px;
-    border-radius: 3px;
+    cursor: pointer;
+    padding: 3px;
 }
 
 .enchantment-item label:hover {
-    background-color: #e9ecef;
-}
-
-.enchantment-name {
-    font-weight: bold;
+    background-color: #f5f5f5;
 }
 
 .enchantment-desc {
-    font-size: 0.8em;
-    color: #6c757d;
-    margin-left: 20px;
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 3px;
+    padding-left: 20px;
     display: none;
 }
 
