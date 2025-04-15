@@ -1,4 +1,3 @@
-// Data from your Python code
 const weaponEnchantments = [
     {"name": "Agile", "bonus": 1, "cl": 5, "desc": "Use DEX instead of STR for damage rolls"},
     {"name": "Allying", "bonus": 1, "cl": 5, "desc": "Adds allies' enhancement bonuses to attacks"},
@@ -274,7 +273,8 @@ function init() {
             renderEnchantments();
         });
     });
-    
+    baseItemSelect.addEventListener('change', () => {
+            
     calculateBtn.addEventListener('click', calculate);
     selectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', true));
     deselectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', false));
@@ -285,6 +285,14 @@ function renderBaseItems() {
     baseItemSelect.innerHTML = '';
     
     const items = itemType === 'Weapon' ? weaponBaseItems : armorBaseItems;
+    
+    // Add a default empty option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Select Base Item --';
+    defaultOption.selected = true;
+    defaultOption.disabled = true;
+    baseItemSelect.appendChild(defaultOption);
     
     items.forEach(item => {
         const option = document.createElement('option');
