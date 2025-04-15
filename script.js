@@ -616,7 +616,7 @@ function calculate() {
     );
     
     //outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
-    outputDiv.innerHTML = `<pre>${statLines.filter(line => line !== "").join('\n')}</pre>`;
+    outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
 }}
 
 // Initialize the app when the DOM is loaded
