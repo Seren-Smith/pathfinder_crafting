@@ -307,7 +307,7 @@ function init() {
     calculateBtn.addEventListener('click', calculate);
     selectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', true));
     deselectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', false));
-}
+})
 
 function renderBaseItems() {
     const itemType = document.querySelector('input[name="itemType"]:checked').value;
@@ -441,7 +441,7 @@ function calculate() {
     const desiredBonus = parseInt(desiredBonusInput.value);
     const existingBonus = parseInt(existingBonusInput.value);
     
-    if (isNaN(desiredBonus) {
+    if (isNaN(desiredBonus)) {
         outputDiv.textContent = "Error: Desired enhancement bonus must be a number";
         return;
     }
@@ -629,7 +629,7 @@ function calculate() {
     );
     
     outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
-}
+}}
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
