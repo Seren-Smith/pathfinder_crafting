@@ -630,3 +630,6 @@ function calculate() {
     
     outputDiv.innerHTML = `<pre>${statLines.filter(line => line !== "").join('\n')}</pre>`;
 }}
+
+// Initialize the app when the DOM is loaded
+document.addEventListener('DOMContentLoaded', init);
