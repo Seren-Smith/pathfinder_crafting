@@ -261,6 +261,19 @@ const desiredEnchantmentsDiv = document.getElementById('desiredEnchantments');
 const selectAllExistingBtn = document.getElementById('selectAllExisting');
 const deselectAllExistingBtn = document.getElementById('deselectAllExisting');
 
+// Initialize the app when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Set default item type to Weapon
+    document.getElementById('weaponType').checked = true;
+    
+    // Render initial items and enchantments
+    renderBaseItems();
+    renderEnchantments();
+    
+    // Set up event listeners
+    setupEventListeners();
+});
+
 function setupEventListeners() {
     // Item type change
     itemTypeRadios.forEach(radio => {
