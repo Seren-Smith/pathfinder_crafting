@@ -2,7 +2,7 @@
 
 A web-based calculator for determining costs and requirements for crafting magical weapons and armor in Pathfinder RPG.
 
-🔗 **Live Demo**: [https://seren-smith.github.io/pathfinder-crafting/](https://seren-smith.github.io/pathfinder-crafting/)
+🔗 **Live Demo**: [https://seren-smith.github.io/pathfinder_crafting/](https://seren-smith.github.io/pathfinder_crafting/)
 
 ## Features
 
