@@ -160,7 +160,8 @@ const weaponBaseItems = [
     {"name": "Chain Whip", "category": "Exotic", "cost": 25},
     {"name": "Spiked Chain", "category": "Exotic", "cost": 25},
     {"name": "Orc Double Axe", "category": "Exotic", "cost": 60},
-    {"name": "Battle Claw", "category": "Exotic", "cost": 50}
+    {"name": "Battle Claw", "category": "Exotic", "cost": 50},
+    {"name": "Shurikens x50", "category": "Exotic", "cost": 10}
 ];
 
 const armorBaseItems = [
@@ -547,7 +548,7 @@ function calculate() {
     }
     
     const totalCost = baseItemCost + materialCost + masterworkCost + baseCost + extraCost;
-    const craftingCost = Math.floor(totalCost * 0.5);
+    const craftingCost = Math.floor(baseCost * 0.5);
     const marketPrice = totalCost;
     const sale60 = Math.floor(marketPrice * 0.6);
     
