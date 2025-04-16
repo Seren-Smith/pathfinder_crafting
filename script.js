@@ -159,7 +159,8 @@ const weaponBaseItems = [
     {"name": "Double Axe", "category": "Exotic", "cost": 60},
     {"name": "Chain Whip", "category": "Exotic", "cost": 25},
     {"name": "Spiked Chain", "category": "Exotic", "cost": 25},
-    {"name": "Orc Double Axe", "category": "Exotic", "cost": 60}
+    {"name": "Orc Double Axe", "category": "Exotic", "cost": 60},
+    {"name": "Battle Claw", "category": "Exotic", "cost": 50}
 ];
 
 const armorBaseItems = [
