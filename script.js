@@ -283,10 +283,7 @@ const knowSpellsCheckbox = document.getElementById('knowSpells');
 const alreadyMasterworkCheckbox = document.getElementById('alreadyMasterwork');
 const calculateBtn = document.getElementById('calculateBtn');
 const outputDiv = document.getElementById('output');
-const existingEnchantmentsDiv = document.getElementById('existingEnchantments');
 const desiredEnchantmentsDiv = document.getElementById('desiredEnchantments');
-const selectAllExistingBtn = document.getElementById('selectAllExisting');
-const deselectAllExistingBtn = document.getElementById('deselectAllExisting');
 
 // Initialize the app when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -312,11 +309,8 @@ function setupEventListeners() {
     
     // Calculate button
     calculateBtn.addEventListener('click', calculate);
-    
-    // Select/Deselect all buttons
-    selectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', true));
-    deselectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', false));
 }
+
 // Initialize the app
 function init() {
     renderBaseItems();
@@ -332,8 +326,6 @@ function init() {
     baseItemSelect.addEventListener('change', () => {
             
     calculateBtn.addEventListener('click', calculate);
-    selectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', true));
-    deselectAllExistingBtn.addEventListener('click', () => toggleAllEnchantments('existing', false));
 })
 
 function renderBaseItems() {
@@ -367,43 +359,18 @@ function renderEnchantments() {
     const enchantments = itemType === 'Weapon' ? weaponEnchantments : armorEnchantments;
     
     // Clear existing enchantments
-    existingEnchantmentsDiv.innerHTML = '';
     desiredEnchantmentsDiv.innerHTML = '';
 
     // Create container divs for scrollable content
     const existingContainer = document.createElement('div');
     existingContainer.className = 'enchantment-container';
-    existingEnchantmentsDiv.appendChild(existingContainer);
-    
+
     const desiredContainer = document.createElement('div');
     desiredContainer.className = 'enchantment-container';
     desiredEnchantmentsDiv.appendChild(desiredContainer);
     
     // Add all enchantments
     enchantments.forEach(ench => {
-        // Existing enchantments
-        const existingDiv = document.createElement('div');
-        existingDiv.className = 'enchantment-item';
-        
-        const existingCheckbox = document.createElement('input');
-        existingCheckbox.type = 'checkbox';
-        existingCheckbox.id = `existing-${ench.name.replace(/\s+/g, '-')}`;
-        existingCheckbox.dataset.name = ench.name;
-        existingCheckbox.dataset.bonus = ench.bonus;
-        
-        const existingLabel = document.createElement('label');
-        existingLabel.htmlFor = existingCheckbox.id;
-        existingLabel.innerHTML = `<strong>${ench.name}</strong> (+${ench.bonus})`;
-        
-        const existingDesc = document.createElement('div');
-        existingDesc.className = 'enchantment-desc';
-        existingDesc.textContent = ench.desc;
-        
-        existingDiv.appendChild(existingCheckbox);
-        existingDiv.appendChild(existingLabel);
-        existingDiv.appendChild(existingDesc);
-        existingContainer.appendChild(existingDiv);
-        
         // Desired enchantments
         const desiredDiv = document.createElement('div');
         desiredDiv.className = 'enchantment-item';
@@ -431,7 +398,6 @@ function renderEnchantments() {
     console.log('Enchantments rendered:', enchantments.length); // Debug
 }
 function toggleAllEnchantments(type, checked) {
-    const container = type === 'existing' ? existingEnchantmentsDiv : desiredEnchantmentsDiv;
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
     
     checkboxes.forEach(checkbox => {
@@ -455,71 +421,49 @@ function getSelectedEnchantments(container) {
 }
 
 function calculate() {
-    // Input validation
-    const desiredBonus = parseInt(desiredBonusInput.value);
-    const existingBonus = parseInt(existingBonusInput.value);
-    
+    // Input validation - set minimum bonus to 1
+    const desiredBonus = Math.max(1, parseInt(desiredBonusInput.value) || 1);
+    desiredBonusInput.value = desiredBonus; // Update the input field
+
     if (isNaN(desiredBonus)) {
         outputDiv.textContent = "Error: Desired enhancement bonus must be a number";
         return;
     }
-    
-    if (isNaN(existingBonus)) {
-        outputDiv.textContent = "Error: Existing enhancement bonus must be a number";
+
+    if (desiredBonus < 1 || desiredBonus > 10) {
+        outputDiv.textContent = "Error: Desired enhancement bonus must be between 1 and 10";
         return;
     }
-    
-    if (desiredBonus < 0 || desiredBonus > 10) {
-        outputDiv.textContent = "Error: Desired enhancement bonus must be between 0 and 10";
-        return;
-    }
-    
-    if (existingBonus < 0 || existingBonus > 10) {
-        outputDiv.textContent = "Error: Existing enhancement bonus must be between 0 and 10";
-        return;
-    }
-    
+
     const itemType = document.querySelector('input[name="itemType"]:checked').value;
     const material = materialSelect.value;
-    
+
     // Material validation
     if (itemType === "Weapon" && material === "Dragonhide") {
         outputDiv.textContent = "Error: Dragonhide cannot be used for weapons";
         return;
     }
-    
-    const enchantments = itemType === "Weapon" ? weaponEnchantments : armorEnchantments;
-    
+
     // Get selected enchantments
-    const existingEnchantments = getSelectedEnchantments(existingEnchantmentsDiv);
     const desiredEnchantments = getSelectedEnchantments(desiredEnchantmentsDiv);
-    
-    // Calculate effective bonuses
-    const existingTotal = existingBonus + existingEnchantments.reduce((sum, ench) => sum + (ench.bonus || 0), 0);
-    
-    // Only count desired enchantments that aren't already selected
-    const newDesiredEnchantments = desiredEnchantments.filter(desired => 
-        !existingEnchantments.some(existing => existing.name === desired.name)
-    );
-    
-    const desiredTotal = desiredBonus + newDesiredEnchantments.reduce((sum, ench) => sum + (ench.bonus || 0), 0);
-    
+    const desiredTotal = desiredBonus + desiredEnchantments.reduce((sum, ench) => sum + (ench.bonus || 0), 0);
+
     if (desiredTotal > 10) {
         outputDiv.textContent = "Error: Total bonus exceeds +10 limit.";
         return;
     }
-    
+
     // Armor must be +1 before special abilities
-    if (itemType !== "Weapon" && newDesiredEnchantments.length > 0 && desiredBonus < 1) {
+    if (itemType !== "Weapon" && desiredEnchantments.length > 0 && desiredBonus < 1) {
         outputDiv.textContent = "Error: Armor/Shield must have +1 enhancement before adding special abilities";
         return;
     }
-    
+
     // Calculate costs
-    const baseCost = enhancementCost(desiredTotal, itemType) - enhancementCost(existingBonus, itemType);
+    const baseCost = enhancementCost(desiredTotal, itemType);
     let extraCost = 0;
-    
-    newDesiredEnchantments.forEach(ench => {
+
+    desiredEnchantments.forEach(ench => {
         if (ench.gp_cost !== undefined && ench.gp_cost !== null) {
             extraCost += ench.gp_cost;
         } else if (ench.name.includes("Spell Resistance")) {
@@ -535,11 +479,11 @@ function calculate() {
             }
         }
     });
-    
+
     // Get base item info
     const baseItemName = baseItemSelect.value;
     let baseItem, baseItemCost, itemCategory;
-    
+
     if (itemType === "Weapon") {
         baseItem = weaponBaseItems.find(w => w.name === baseItemName) || {};
         baseItemCost = baseItem.cost || 0;
@@ -549,11 +493,11 @@ function calculate() {
         baseItemCost = baseItem.cost || 0;
         itemCategory = baseItem.type || "Light";
     }
-    
+
     // Material cost
     const materialInfo = baseMaterials[material] || {"dc_mod": 0, "cost": 0};
     let materialCost = 0;
-    
+
     if (material !== "None") {
         if (itemType === "Weapon") {
             materialCost = materialInfo.cost?.Weapon || 0;
@@ -565,22 +509,22 @@ function calculate() {
             }
         }
     }
-    
+
     // Masterwork cost
     let masterworkCost = 0;
     if (!alreadyMasterworkCheckbox.checked) {
         masterworkCost = itemType === "Weapon" ? 300 : 150;
     }
-    
+
     const totalCost = baseItemCost + materialCost + masterworkCost + baseCost + extraCost;
-    const craftingCost = Math.floor(baseCost * 0.5);
+    const craftingCost = Math.floor((baseCost + extraCost) * 0.5); // Should include extraCost in crafting cost
     const marketPrice = totalCost;
     const sale60 = Math.floor(marketPrice * 0.6);
-    
+
     // Crafting DCs
     const materialDcMod = materialInfo.dc_mod || 0;
     let craftDc;
-    
+
     if (itemType === "Weapon") {
         craftDc = 12 + (desiredBonus * 4) + materialDcMod;
         if (itemCategory === "Martial") {
@@ -591,23 +535,26 @@ function calculate() {
     } else {
         craftDc = 10 + (baseItem.ac || 0) + (desiredBonus * 4) + materialDcMod;
     }
-    
+
     // Caster Level
-    const enchantCl = Math.max(...newDesiredEnchantments.map(ench => ench.cl || 0), 0);
+    const enchantCl = Math.max(...desiredEnchantments.map(ench => ench.cl || 0), 0);
     const bonusCl = 3 * desiredBonus;
     const requiredCl = Math.max(enchantCl, bonusCl, 8);
-    
-    // Crafting time
-    const daysNormal = Math.max(1, Math.floor(craftingCost / 1000) + (craftingCost % 1000 ? 1 : 0));
-    const daysAccel = Math.max(1, Math.floor(daysNormal / 2) + (daysNormal % 2 ? 1 : 0));
-    
+
+    // Crafting time - based on MARKET PRICE (totalCost), not just craftingCost
+    const basePrice = totalCost; // This is the market price we use for time calculation
+    const hoursNormal = Math.max(8, Math.ceil(basePrice / 1000) * 8);
+    const daysNormal = Math.ceil(hoursNormal / 8); // Convert to days
+    const hoursAccel = Math.max(4, Math.ceil(basePrice / 1000) * 4);
+    const daysAccel = Math.ceil(hoursAccel / 8); // Convert to days
+
     // Masterwork info
     let mwInfo = "";
     if (!alreadyMasterworkCheckbox.checked) {
         const mwDc = 20;
         mwInfo = `\nMasterwork DC: ${mwDc} (Cost: ${masterworkCost} gp)`;
     }
-    
+
     // Build output
     const statLines = [
         `Item Type: ${itemType}`,
@@ -617,11 +564,11 @@ function calculate() {
         "",
         "Selected Enchantments:"
     ];
-    
-    newDesiredEnchantments.forEach(ench => {
+
+    desiredEnchantments.forEach(ench => {
         statLines.push(`- ${ench.name} (+${ench.bonus || 0}): ${ench.desc || ''}`);
     });
-    
+
     statLines.push(
         "",
         "--- Costs ---",
@@ -642,13 +589,34 @@ function calculate() {
         mwInfo,
         "",
         "--- Crafting Time ---",
-        `Normal: ${daysNormal} day(s)`,
-        `Accelerated: ${daysAccel} day(s) (DC +5)`
+        `Normal: ${hoursNormal} hours (${daysNormal} days)`,
+        `Accelerated: ${hoursAccel} hours (${daysAccel} days) (DC +5)`
     );
-    
-    //outputDiv.textContent = statLines.filter(line => line !== "").join('\n');
+
     outputDiv.innerHTML = statLines.filter(line => line !== "").join('<br>');
 }}
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
+
+document.getElementById('enchantmentSearch').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase().trim();
+    const enchantments = document.querySelectorAll('#desiredEnchantments .enchantment-item');
+
+    // Show all if search is empty
+    if (searchTerm === '') {
+        enchantments.forEach(el => el.style.display = 'block');
+        return;
+    }
+
+    // Perform exact word-start matching
+    enchantments.forEach(enchantment => {
+        const text = enchantment.textContent.toLowerCase();
+
+        // Split into words and check for exact matches at word starts
+        const words = text.split(/\s+/);
+        const hasMatch = words.some(word => word.substring(0, searchTerm.length) === searchTerm);
+
+        enchantment.style.display = hasMatch ? 'block' : 'none';
+    });
+});
